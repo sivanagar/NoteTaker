@@ -3,29 +3,21 @@ const path = require("path");
 const router = require('express').Router();
 const  {createNewNote , deleteNote} = require('../../lib/notes');
 const  db  = require('../../db/db');
-
-// fs.watch(path.join(__dirname, '../../db/db.json'), (eventType, filename) => {
-//     console.log("\nThe file", filename, "was modified!");
-//     console.log("The type of change was:", eventType);
-//     db  = require('../../db/db');
-//   });
-
+const { v4: uuidv4 } = require('uuid');
 
 router.get('/notes', (req,res) => {
-    let results = db
-    res.json(results);
+    res.json(db);
 })
 
 router.post('/notes', (req, res) => {
-        req.body.id = db.length.toString();
-        const note = createNewNote(req.body, db)
+        req.body.id = uuidv4();
+        const note = createNewNote(req.body)
         res.json(db);
-    })  
+})  
 
 router.delete('/notes/:id', (req, res) => {
     const id = req.params.id.toString()
-    if(deleteNote(id,db)) {
-        process.location.reload()
+    if(deleteNote(id)) {
         res.status(200).send('The note deleted!');
     } else {
     
